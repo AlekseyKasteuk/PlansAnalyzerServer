@@ -7,11 +7,10 @@ const createToken = require('../../../util/create-token');
 module.exports = (req, res, next) => {
     const user = req.body.user;
     const team = req.body.team;
-    const error =   (!user.username && 'Fill in username') ||
+    const error =   (!user.email && 'Fill in username') ||
         (!user.password && 'Fill in password') ||
-        (!validator('USERNAME', user.username) && 'Invalid username') ||
+        (!validator('EMAIL', user.email) && 'Invalid user') ||
         (!validator('PASSWORD', user.password) && 'Invalid password');
-    console.log('LOGIN ERROR:', error);
     if (error) {
         return next({ status: 400, message: error });
     }

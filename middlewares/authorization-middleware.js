@@ -23,6 +23,7 @@ module.exports = (req, res, next) => {
     }
 
     console.log('AUTHORIZATION CHECK: authorized path', req.url);
+    console.log('AUTHORIZATION CHECK: token', token);
 
     if (!token) {
 
@@ -33,7 +34,12 @@ module.exports = (req, res, next) => {
 
         console.log(user);
 
-        const query = "SELECT id, username, password, email, team_id, role FROM user WHERE username = ? AND password = ? AND id = ? LIMIT 1";
+        const query = ` SELECT
+                            user.id as id, user.username as username, user.email as email, user.role as role,
+                            team.id as team_id, team.name as team_name
+                        FROM user
+                        INNER JOIN team ON team.id = user.team_id
+                        WHERE user.username = ? AND user.password = ? AND user.id = ? LIMIT 1`;
 
         dbConnection.query(query, [
             user.username,

@@ -18,6 +18,7 @@ router.post('/team/create', teamModule.isExist, teamModule.create, userModule.cr
 
 router.post('/user/login', teamModule.isExist, userModule.login);
 router.post('/user/create', teamModule.isExist, userModule.create);
+router.get('/user/check', userModule.check);
 
 router.post('/site', siteModule.create, dirModule.create);
 router.get('/sites', siteModule.getList);
