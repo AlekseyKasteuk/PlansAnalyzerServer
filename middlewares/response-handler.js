@@ -7,8 +7,8 @@ module.exports = function (params, req, res, next) {
             user: {
                 id: req._user.id,
                 username: req._user.username,
-                email: req._user.username,
-                role: req._user.username
+                email: req._user.email,
+                role: req._user.role
             },
             team: {
                 id: req._user.team_id,

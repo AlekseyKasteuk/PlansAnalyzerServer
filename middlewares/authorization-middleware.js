@@ -10,7 +10,8 @@ const jwt = require('jsonwebtoken');
 const unauthorizedPaths = new RegExp([
     '^/team/create$',
     '^/team/available$',
-    '^/user/login$'
+    '^/user/login$',
+    '^/img/'
 ].map(v => '(' + v + ')').join('|'));
 
 module.exports = (req, res, next) => {
@@ -39,10 +40,10 @@ module.exports = (req, res, next) => {
                             team.id as team_id, team.name as team_name
                         FROM user
                         INNER JOIN team ON team.id = user.team_id
-                        WHERE user.username = ? AND user.password = ? AND user.id = ? LIMIT 1`;
+                        WHERE user.email = ? AND user.password = ? AND user.id = ? LIMIT 1`;
 
         dbConnection.query(query, [
-            user.username,
+            user.email,
             crypto(user.password),
             user.id
         ], (err, user) => {

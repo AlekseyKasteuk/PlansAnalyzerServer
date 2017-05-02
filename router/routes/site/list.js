@@ -13,6 +13,11 @@ module.exports = (req, res, next) => {
         if (!!err) {
             return next({ status: 500, message: messages.error.dbError, error: err });
         }
-        return next({ status: 200, data: sites });
+        return next({ status: 200, data: sites.map((site) => {
+            if (!site.image) {
+                site.image = '/img/default/default_building.jpg';
+            }
+            return site;
+        }) });
     });
 };

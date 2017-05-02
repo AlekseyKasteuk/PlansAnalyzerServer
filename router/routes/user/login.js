@@ -14,10 +14,15 @@ module.exports = (req, res, next) => {
     if (error) {
         return next({ status: 400, message: error });
     }
-    const query = "SELECT id, username, password, email, team_id, role FROM user WHERE username = ? AND password = ? AND team_id = ? LIMIT 1";
+    const query = ` SELECT
+                        user.id as id, user.username as username, user.email as email, user.role as role,
+                        team.id as team_id, team.name as team_name
+                    FROM user
+                    INNER JOIN team ON team.id = user.team_id
+                    WHERE user.email = ? AND user.password = ? AND team.id = ? LIMIT 1`;
 
     dbConnection.query(query, [
-        user.username,
+        user.email,
         crypto(user.password),
         team.id
     ], (err, user) => {
@@ -29,7 +34,18 @@ module.exports = (req, res, next) => {
             return next({status: 404, message: messages.error.authorizationFailed});
         }
         user[0].password = req.body.user.password;
-        next({ status: 200, data: createToken(user[0]) });
+        next({ status: 200, data: createToken(user[0]), user: {
+            team: {
+                id: user[0].team_id,
+                name: user[0].team_name
+            },
+            user: {
+                id: user[0].id,
+                username: user[0].username,
+                email: user[0].email,
+                role: user[0].role
+            }
+        }});
 
     });
 };

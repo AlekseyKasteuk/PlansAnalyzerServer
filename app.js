@@ -17,6 +17,8 @@ app.use(bodyParser.urlencoded({'extended':'true'}));
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
+app.use(express.static('assets'));
+
 var server = app.listen(serverConfigs.port, (err) => {
 	console.log("Server run on port:", serverConfigs.port);
 });
