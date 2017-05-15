@@ -30,6 +30,9 @@ module.exports = (req, res, next) => {
                     return next({ status: 400, message: messages.error.dbQueryError, error: err });
                 }
                 req._site = site;
+                if (!site.image) {
+                    site.image = '/img/default/default_building.jpg';
+                }
                 return next();
             });
         });

@@ -19,12 +19,8 @@ module.exports = (req, res, next) => {
     const token = req.body.authorization || req.headers.authorization || req.params.authorization;
 
     if (unauthorizedPaths.test(req.url)) {
-        console.log('AUTHORIZATION CHECK: unauthorized path', req.url);
         return next();
     }
-
-    console.log('AUTHORIZATION CHECK: authorized path', req.url);
-    console.log('AUTHORIZATION CHECK: token', token);
 
     if (!token) {
 
@@ -32,8 +28,6 @@ module.exports = (req, res, next) => {
     }
 
     jwt.verify(token, secret, (err, user) => {
-
-        console.log(user);
 
         const query = ` SELECT
                             user.id as id, user.username as username, user.email as email, user.role as role,

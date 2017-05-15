@@ -1,4 +1,5 @@
 module.exports = {
     create: require('./create'),
-    remove: require('./delete')
+    remove: require('./delete'),
+    get: require('./directory-content')
 };

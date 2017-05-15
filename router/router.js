@@ -24,7 +24,9 @@ router.post('/site', siteModule.create, dirModule.create);
 router.get('/sites', siteModule.getList);
 router.delete('/site', siteModule.remove);
 
+
 router.post('/directory', dirModule.create);
+router.get('/directory', dirModule.get);
 router.delete('/directory', dirModule.remove);
 
 router.use(responseHandler);

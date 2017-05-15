@@ -19,10 +19,10 @@ const getParentDirectorySiteId = (dir) => {
     });
 };
 
-const createDirectory = (dir, site) => {
+const createDirectory = (dir, site, user) => {
     return new Promise((resolve, reject) => {
-        let query = "INSERT INTO directory (id, name, parent_directory_id, site_id, is_root) VALUES (?, ?, ?, ?, ?)";
-        dbConnection.query(query, [dir.id, dir.name, dir.parent_directory_id, dir.site_id, !!site], (err, results) => {
+        let query = "INSERT INTO directory (id, name, parent_directory_id, site_id, is_root, created_by) VALUES (?, ?, ?, ?, ?, ?)";
+        dbConnection.query(query, [dir.id, dir.name, dir.parent_directory_id, dir.site_id, !!site, dir.created_by], (err, results) => {
             if (!!err) {
                 if (site) {
                     dbConnection.rollback((err) => {
@@ -43,7 +43,17 @@ const createDirectory = (dir, site) => {
                     return resolve({ status: 200, data: site });
                 });
             } else {
-                return resolve({ status: 200, data: dir });
+                const response = {
+                    id: dir.id,
+                    name: dir.name,
+                    parent_directory: dir.parent_directory_id,
+                    created_date: Date.now(),
+                    type: 'directory',
+                    thumbnail: '/img/default/directory_icon.png',
+                    created_by_username: user.username,
+                    created_by_email: user.email
+                };
+                return resolve({ status: 200, data: response });
             }
         });
     });
@@ -52,7 +62,7 @@ const createDirectory = (dir, site) => {
 module.exports = (req, res, next) => {
     if (req._site) {
         req.body.directory = {
-            name: req._site.name
+            name: 'root'
         };
     }
     let dir = req.body.directory;
@@ -67,9 +77,10 @@ module.exports = (req, res, next) => {
         return next({ status: 400, message: error });
     }
     dir.id = idGenerator(20);
+    dir.created_by = req._user.id;
     if (!req._site) {
         getParentDirectorySiteId(dir).then((dir) => {
-            createDirectory(dir).then((data) => {
+            createDirectory(dir, null, req._user).then((data) => {
                 next(data);
             });
         }, (data) => {
